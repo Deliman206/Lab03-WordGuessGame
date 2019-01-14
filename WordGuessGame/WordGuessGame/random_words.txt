@@ -2,3 +2,7 @@ dog
 elephant
 cat
 house
+puppies
+dragon
+clouds
+
