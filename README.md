@@ -11,17 +11,37 @@ Using everything you’ve learned up to this point, create a word guess game tha
 ## Program Components
 
 The program (should) contain the following
-- Methods for each action (suggestions: Home navigation, View words in the external file, add a word to the external file, Remove words from a text file, exit the game, start a new game)
-- When playing a game, randomly select one of the words to output to the console for the user to guess (Use the Random class)
-- You should have a record of the letters they have attempted so far
-- If they guess a correct letter, display that letter in the console for them to refer back to when making guesses (i.e. C _ T S )
-- Your program does not need to be case sensitive.
-- Errors should be handled through Exception handling
-- Do not create external classes to accomplish this task. All code should live in the Program.cs file
-- Stay within scope, you may use the methods/classes listed below if desired.
-- Once the game is completed, the user should be presented with the option to “Play again” (a new random word is generated), or “Exit” (the program terminates)
-- The user should only be allowed to guess only 1 letter at a time. Do not make it so that they can input the whole alphabet and get the answer.
-- When running your application, it should activate the user interface without any direct code manipulation
+* Menu
+* Add Words
+* Play Game
+  - When playing a game, randomly select one of the words to output to the console for the user to guess (Use the Random class)
+  - You should have a record of the letters they have attempted so far
+  - Your program does not need to be case sensitive.
+  - The user should only be allowed to guess only 1 letter at a time. Do not make it so that they can input the whole alphabet and get the answer.
+* Update Display
+  - If they guess a correct letter, display that letter in the console for them to refer back to when making guesses (i.e. C _ T S )
+* Replay & Exit
+  - Once the game is completed, the user should be presented with the option to “Play again” (a new random word is generated), or “Exit” (the program terminates)
+* CRUD Methods
+  - Errors should be handled through Exception handling
+
+### Menu
+Once the application launches, the Main Menu is shown. From here the user can Add words to the game, play a new game, or exit the program.
+The user can either enter the menu option or simply enter the number of the menu item.
+![mainMenu](assets/mainMenu.png)
+
+### Add Words
+In the add words component of the guessing game, the user can enter words they would like to have randomly appear in the game.
+When the user is done entering words (one at a time), they press ENTER, passing no characters to the method and returning to the main Menu.
+![addWords](assets/addWords.png)
+
+### Play the Game
+The user enter one letter at a time in order to guess what the mystery word is. 
+The program will not progress if any key is entered except a letter key.
+After each correct or incorrect guess, the visual for the mystery word and the user's guesses will update
+Upon success, the word is shown and the option ot replay is given. If the user replays the game will start again.
+If the user declines to play again they will be sent to the main menu.
+![guessGame](assets/guessGame.png)
 
 ## Testing
 Test that your app has the following functionality:
@@ -31,8 +51,3 @@ Test that your app has the following functionality:
 - Test that you can retrieve all words from the file
 - Test that the word chosen can accurately detect if the letter exists in the word (test that a letter does exist and does not exist)
 
-## Readme
-- tell them what it is (with context, provide a summary)
-- show them what it looks like in action (Visuals)
-- show them how they use it (Step by step directions, “Happy Path” walk through)
-- tell them any other relevant details 
