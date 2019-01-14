@@ -70,6 +70,7 @@ namespace WordGuessGame
                 string wordToAddUpdate = inputWordUpdate.ToLower();
                 UpdateFile(path, wordToAddUpdate);
             }
+            Console.Clear();
             return Menu(path);
         }
         /// <summary>
@@ -79,6 +80,7 @@ namespace WordGuessGame
         /// <returns>Replay method</returns>
         static int Game(string path)
         {
+            Console.Clear();
             Console.WriteLine("Welcome to Word Guess!\nThe game where you get to guess a random word.\nI am your host Computer.\nLet's begin!");
 
             // Get Random Word and its length
