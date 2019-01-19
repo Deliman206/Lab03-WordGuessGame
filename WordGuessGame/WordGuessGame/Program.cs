@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace WordGuessGame
 {
-    class Program
+    public class Program
     {
-        static string errorLog = "../../../error_logs.txt";
-        static StreamWriter errorLogger = File.AppendText(errorLog);
         /// <summary>
         /// Entry point for Program. Calls the Menu.
         /// </summary>
@@ -15,7 +14,6 @@ namespace WordGuessGame
         {
             string pathText = "../../../random_words.txt";
             Menu(pathText);
-            Game(pathText);
         }
 
         /// <summary>
@@ -24,27 +22,65 @@ namespace WordGuessGame
         /// <param name="path">Path to File with Random Words</param>
         /// <returns> Method calls to adding words, starting game, exiting program</returns>
 
-        static int Menu(string path)
+        static void Menu(string path)
         {
+            Console.Clear();
             Console.WriteLine("WORD GUESS");
-            Console.WriteLine("1. Add Words\n2. Play Game\n3. Exit");
+            Console.WriteLine("1. Add Words\n2. View Words\n3. Remove Words\n4. Start New List\n5. Play Game\n6. Exit");
             string menuChoice = Console.ReadLine();
             string lowerCaseMenuChoice = menuChoice.ToLower();
-            switch (lowerCaseMenuChoice)
+
+            if (lowerCaseMenuChoice == "add words" || lowerCaseMenuChoice == "1")
+                AddWords(path);
+            if (lowerCaseMenuChoice == "view words" || lowerCaseMenuChoice == "2")
+                ViewWords(path);
+            if (lowerCaseMenuChoice == "remove words" || lowerCaseMenuChoice == "3")
+                RemoveWords(path);
+            if (lowerCaseMenuChoice == "start new list" || lowerCaseMenuChoice == "4")
+                StartNewList(path);
+            if (lowerCaseMenuChoice == "play game" || lowerCaseMenuChoice == "5")
+                Game(path);
+            if (lowerCaseMenuChoice == "exit" || lowerCaseMenuChoice == "6")
+                Exit();
+            else
             {
-                case "add words":
-                    return AddWords(path);
-                case "1":
-                    return AddWords(path);
-                case "play game":
-                    return Game(path);
-                case "2":
-                    return Game(path);
-                case "exit":
-                    return Exit();
-                default:
-                    return Menu(path);
+                Menu(path);
             }
+        }
+        /// <summary>
+        /// Deletes the list of words for the game and creates a new one.
+        /// Allows the user to enter more than one word into the new list.
+        /// </summary>
+        /// <param name="path"></param>
+        static void StartNewList(string path)
+        {
+            DeleteFile(path);
+            bool done = false;
+            string firstWord = "";
+            while (firstWord == "")
+            {
+                Console.Clear();
+                Console.WriteLine("What word would to like to add to the game?");
+                string inputWordCreate = Console.ReadLine();
+                firstWord = inputWordCreate.ToLower();
+            }
+            CreateFile(path, firstWord);
+            while (done == false)
+            {
+                Console.Clear();
+                Console.WriteLine("\nWould you like to add another word? If you are done hit ENTER.");
+                string inputWordUpdate = Console.ReadLine();
+                if (inputWordUpdate == "")
+                {
+                    done = true;
+                    continue;
+                }
+                string wordToAddUpdate = inputWordUpdate.ToLower();
+                UpdateFile(path, wordToAddUpdate);
+            }
+            Console.Clear();
+            Menu(path);
+
         }
         /// <summary>
         /// Method to Create a text file for the guess game.
@@ -52,8 +88,10 @@ namespace WordGuessGame
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Method call to return to the main menu</returns>
-        static int AddWords(string path)
+
+        static void AddWords(string path)
         {
+            Console.Clear();
             bool done = false;
             Console.WriteLine("What word would to like to add to the game?");
             string inputWordCreate = Console.ReadLine();
@@ -66,19 +104,97 @@ namespace WordGuessGame
                 if (inputWordUpdate == "")
                 {
                     done = true;
+                    continue;
+
                 }
                 string wordToAddUpdate = inputWordUpdate.ToLower();
                 UpdateFile(path, wordToAddUpdate);
             }
             Console.Clear();
-            return Menu(path);
+            Menu(path);
+        }
+        /// <summary>
+        /// Method to view all the words in the random_words.txt file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>Method call to return to the main menu</returns>
+        static void ViewWords(string path)
+        {
+            Console.Clear();
+            string[] lines = ReadFile(path);
+
+            foreach(string line in lines)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine("PRESS ENTER TO WHEN DONE ....");
+            Console.Read();
+        }
+        /// <summary>
+        /// Method to remove any words from the 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static void RemoveWords(string path)
+        {
+            Console.Clear();
+            string[] viewlines = ReadFile(path);
+
+            foreach (string line in viewlines)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine("What word would to like to remove from the game?");
+            // Take input and convert to lower case
+            string inputWordRemove = Console.ReadLine();
+            string wordToRemove = inputWordRemove.ToLower();
+
+            // Make array of all the words
+            string[] lines = ReadFile(path);
+
+            // Make a new List to search the words
+            List<string> Words = new List<string>();
+
+            // Decalre a counter for search 
+            int count = 0;
+            int removeIndex = 0;
+
+            // make string array into List<string>
+            // track the idex of the word to remove
+            foreach(string line in lines)
+            {
+                Words.Add(line);
+                if (line == wordToRemove)
+                {
+                    removeIndex = count;
+                }
+                count += 1;
+            }
+
+            // Remove at the tracked index in the List
+            Words.RemoveAt(removeIndex);
+
+            // Convert to Output type string[]
+            string[] newWordsList = Words.ToArray();
+
+            //Delete the old file
+            DeleteFile(path);
+
+            // Recreate the File
+            foreach(string line in newWordsList)
+            {
+                CreateFile(path, line);
+            }
+
+            // Go home Menu
+            Menu(path);
         }
         /// <summary>
         /// Method that runs the game
         /// </summary>
         /// <param name="path"></param>
         /// <returns>Replay method</returns>
-        static int Game(string path)
+        static void Game(string path)
         {
             Console.Clear();
             Console.WriteLine("Welcome to Word Guess!\nThe game where you get to guess a random word.\nI am your host Computer.\nLet's begin!");
@@ -124,7 +240,15 @@ namespace WordGuessGame
             Console.WriteLine(display);
             Console.WriteLine("Thank you for playing!");
             Console.Read();
-            return Replay(path);
+            Replay(path);
+        }
+        /// <summary>
+        /// Closes the Application
+        /// </summary>
+        /// <returns>False return, Application should close before then.</returns>
+        static void Exit()
+        {
+            Environment.Exit(1);
         }
         /// <summary>
         /// Check if user guess is in the random word
@@ -133,7 +257,7 @@ namespace WordGuessGame
         /// <param name="randomWord"></param>
         /// <param name="userGuess"></param>
         /// <returns>display word </returns>
-        static string UpdateDisplay(string display, string randomWord, char userGuess)
+        static public string UpdateDisplay(string display, string randomWord, char userGuess)
         {
             string temp = "";
             int x = 0;
@@ -156,7 +280,7 @@ namespace WordGuessGame
         /// </summary>
         /// <param name="path"></param>
         /// <returns>False return</returns>
-        static int Replay(string path)
+        static void Replay(string path)
         {
             Console.WriteLine("Would you like to play again? Yes or No");
             string replayChoiceInput = Console.ReadLine();
@@ -170,56 +294,27 @@ namespace WordGuessGame
             {
                 Menu(path);
             }
-            else
-            {
-                Replay(path);
-            }
-
-            return -1;
+            
         }
         /// <summary>
-        /// Closes the Application
-        /// </summary>
-        /// <returns>False return, Application should close before then.</returns>
-        static int Exit()
-        {
-            Environment.Exit(1);
-            return -1;
-        }
-        /// <summary>
-        /// Method to Create a File with a word
+        /// Method to Create a File with a word.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="word"></param>
         public static void CreateFile(string path, string word)
         {
-            if (File.Exists("random_words.txt"))
-            {
-                UpdateFile(path, word);
-            }
-            else
+            if (File.Exists(path))
+                throw new Exception();
+            try
             {
                 using (StreamWriter streamWriter = new StreamWriter(path))
-                {
-                    try
-                    {
-                        streamWriter.WriteLine(word);
-                    }
-                    catch (Exception e)
-                    {
-                        errorLogger.WriteLine(e);
-                        throw;
-                    }
-                }
+                streamWriter.WriteLine(word);
             }
-        }
-        /// <summary>
-        /// Method to Create a File without a word
-        /// </summary>
-        /// <param name="path"></param>
-        public static void CreateFile(string path)
-        {
-            StreamWriter streamWriter = new StreamWriter(path);
+            catch (Exception)
+            {
+                Console.WriteLine("This file already exists!");
+                throw;
+            }
         }
         /// <summary>
         /// Method to Read the contents of a file.
@@ -227,6 +322,8 @@ namespace WordGuessGame
         /// <param name="path"></param>
         public static string[] ReadFile(string path)
         {
+            if (!File.Exists(path))
+                throw new Exception();
             try
             {
                 string[] textLines = File.ReadAllLines(path);
@@ -234,7 +331,7 @@ namespace WordGuessGame
             }
             catch (Exception e)
             {
-                errorLogger.WriteLine(e);
+                Console.WriteLine(e);
                 throw;
             }
         }
@@ -245,6 +342,8 @@ namespace WordGuessGame
         /// <param name="word"></param>
         public static void UpdateFile(string path, string word)
         {
+            if (!File.Exists(path))
+                throw new Exception();
             try
             {
                 using (StreamWriter streamWriter = File.AppendText(path))
@@ -254,7 +353,7 @@ namespace WordGuessGame
             }
             catch (Exception e)
             {
-                errorLogger.WriteLine(e);
+                Console.WriteLine(e);
                 throw;
             }
         }
@@ -270,7 +369,7 @@ namespace WordGuessGame
             }
             catch (Exception e)
             {
-                errorLogger.WriteLine(e);
+                Console.WriteLine(e);
                 throw;
             }
         }
